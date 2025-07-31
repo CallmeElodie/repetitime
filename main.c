@@ -1,7 +1,7 @@
 #include "raylib.h"
 
-int main()
-{
+int main(){
+
     const int screenWidth = 800;
     const int screenHeight = 450;
 
@@ -17,17 +17,17 @@ int main()
     Color colorForeground2 = GetColor(0x4d6443FF);
 
 
-    float playerPosX = 50;
-    float playerPosY = 50;
+    Rectangle player = { 100, 100, 50, 50 };
+    Rectangle ground = { 0, 400, 800, 50 };
 
+    bool isGrounded;
     bool showText = true;
-    const char* message = "Welcome to Repeti-time\n\nPress any key to play";
+    const char* message = "Welcome to Repeti-time\n\np,Press any key to play";
 
     SetTargetFPS(60);
 
-    while (!WindowShouldClose())
-    {
-        UpdateMusicStream(pondering);
+    while (!WindowShouldClose()){
+
 
         if (GetKeyPressed() != 0){
             showText = false;
@@ -35,19 +35,33 @@ int main()
 
         if (!showText){
 
+            player.y += 4;
 
-            DrawRectangle(playerPosX, playerPosY, 50, 50, colorForeground2);
-            DrawRectangle(0, 400, 800, 50, colorMiddleground1);
+            DrawRectangle(player.x, player.y, player.width, player.height, colorForeground2);
+            DrawRectangle(ground.x, ground.y, ground.width, ground.height, colorMiddleground1);
 
             if (IsKeyDown(KEY_A)){
-                playerPosX -= 4;
+                player.x -= 4;
             }
             if (IsKeyDown(KEY_D)){
-                playerPosX += 4;
+                player.x += 4;
             }
-            if (playerPosY < 350) {
-                playerPosY += 4;
+
+            if (CheckCollisionRecs(player, ground)){
+                
+                Rectangle overlap = GetCollisionRec(player, ground);
+                
+                player.y -= overlap.height; 
+            
+                isGrounded = true; 
             }
+            else
+            {
+                isGrounded = false;
+            }
+
+
+
         }
 
         BeginDrawing();
